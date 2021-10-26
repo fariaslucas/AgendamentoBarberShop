@@ -30,12 +30,12 @@
 			
 			<!-- Tabela com os dados -->
 			<p:dataTable var="agendamento" value="#{agendamentoBean.agendamentos}"  
-						id="dtAgendamentos" resizableColumns="true">
+				     id="dtAgendamentos" resizableColumns="true">
 						
 				<!-- Botão novo --> 
 	            <f:facet name="header">
 					<p:commandButton value="Novo" icon="pi pi-plus" actionListener="#{agendamentoBean.novo}" 
-									 update=":formAgendamento:agendamentoPanel" oncomplete="PF('agendamentoDialog').show()">
+							 update=":formAgendamento:agendamentoPanel" oncomplete="PF('agendamentoDialog').show()">
 						<p:resetInput target=":formAgendamento:agendamentoPanel"/>
 					</p:commandButton>
 	            </f:facet>
@@ -67,13 +67,13 @@
 	            <!-- Botões para editar e excluir -->
 	            <p:column>
 	                <p:commandButton class="ui-button-warning" value="Editar"
-	                				 update=":formAgendamento:agendamentoPanel"
-	                				 oncomplete="PF('agendamentoDialog').show()" process="@this">
+	                		 update=":formAgendamento:agendamentoPanel"
+	                		 oncomplete="PF('agendamentoDialog').show()" process="@this">
 	                	<f:setPropertyActionListener value="#{agendamento}" target="#{agendamentoBean.agendamento}"/>
                     	<p:resetInput target=":formAgendamento:agendamentoPanel"/>
 	                </p:commandButton>
 	                <p:commandButton class="ui-button-danger" value="Excluir"
-	                				 process="@this" oncomplete="PF('excluirDialog').show()">
+	                		 process="@this" oncomplete="PF('excluirDialog').show()">
 	                	<f:setPropertyActionListener value="#{agendamento}" target="#{agendamentoBean.agendamento}"/>
 	                </p:commandButton>
 	            </p:column>
@@ -91,7 +91,7 @@
 	                    <div class="p-field">
 	                        <p:outputLabel for="telefone">Telefone</p:outputLabel>
 	                        <p:inputMask id="telefone" value="#{agendamentoBean.agendamento.telefone}" required="true"
-	                        			 mask="99999-9999"/>
+	                        	     mask="99999-9999"/>
 	                    </div>
 	                    <div class="p-field">
 	                    	<p:outputLabel for="servico">Serviço</p:outputLabel>
