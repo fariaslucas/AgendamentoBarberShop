@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<meta charset="UTF-8"/>
+		<title>Barber Shop</title>
+	</h:head>
+	<h:body>
+		<f:metadata>
+			<f:viewAction action="#{agendamentoBean.listar}" />
+		</f:metadata>
+		
+		<!-- Cabeçalho -->
+		 <p:toolbar>
+			<p:toolbarGroup>
+				<p:graphicImage library="img" name="barber-shop.png" width="50px"/>
+				<h2>Barber Shop</h2>
+			</p:toolbarGroup>
+			<p:toolbarGroup>
+				<span style="font-weight: bold">Agendamentos</span>
+			</p:toolbarGroup>
+		</p:toolbar>
+		
+		<!-- Formulário -->
+		<h:form id="formAgendamento">
+			<p:growl id="mensagem"/>
+			
+			<!-- Tabela com os dados -->
+			<p:dataTable var="agendamento" value="#{agendamentoBean.agendamentos}"  
+						id="dtAgendamentos" resizableColumns="true">
+						
+				<!-- Botão novo --> 
+	            <f:facet name="header">
+					<p:commandButton value="Novo" icon="pi pi-plus" actionListener="#{agendamentoBean.novo}" 
+									 update=":formAgendamento:agendamentoPanel" oncomplete="PF('agendamentoDialog').show()">
+						<p:resetInput target=":formAgendamento:agendamentoPanel"/>
+					</p:commandButton>
+	            </f:facet>
+	            
+	            <!-- Colunas com os dados -->
+	            <p:column headerText="Cliente" filterBy="#{agendamento.cliente}">
+	                <h:outputText value="#{agendamento.cliente}"/>
+	            </p:column>
+	            <p:column headerText="Telefone">
+	                <h:outputText value="#{agendamento.telefone}"/>
+	            </p:column>
+	            <p:column headerText="Serviço" filterBy="#{agendamento.servico}" filterMatchMode="contains">
+	                <h:outputText value="#{agendamento.servico}"/>
+	            </p:column>
+	            <p:column headerText="Data">
+	                <h:outputText value="#{agendamento.data.time}">
+	                	<f:convertDateTime pattern="dd/MM/yyyy"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="Horário">
+	                <h:outputText value="#{agendamento.data.time}">
+	                	<f:convertDateTime pattern="HH:mm"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="Observações">
+	                <h:outputText value="#{agendamento.observacoes}"/>
+	            </p:column>
+	            
+	            <!-- Botões para editar e excluir -->
+	            <p:column>
+	                <p:commandButton class="ui-button-warning" value="Editar"
+	                				 update=":formAgendamento:agendamentoPanel"
+	                				 oncomplete="PF('agendamentoDialog').show()" process="@this">
+	                	<f:setPropertyActionListener value="#{agendamento}" target="#{agendamentoBean.agendamento}"/>
+                    	<p:resetInput target=":formAgendamento:agendamentoPanel"/>
+	                </p:commandButton>
+	                <p:commandButton class="ui-button-danger" value="Excluir"
+	                				 process="@this" oncomplete="PF('excluirDialog').show()">
+	                	<f:setPropertyActionListener value="#{agendamento}" target="#{agendamentoBean.agendamento}"/>
+	                </p:commandButton>
+	            </p:column>
+	       </p:dataTable>
+	       
+	       <!-- Dialog para inserir/alterar um agendamento -->
+	       <p:dialog header="Novo Agendamento" showEffect="fade" modal="true"
+                  widgetVar="agendamentoDialog" responsive="true">
+       	   		<p:outputPanel id="agendamentoPanel" class="ui-fluid">
+       	   			<p:outputPanel rendered="#{not empty agendamentoBean.agendamento}">
+       	   				<div class="p-field">
+	                        <p:outputLabel for="cliente">Cliente</p:outputLabel>
+	                        <p:inputText id="cliente" value="#{agendamentoBean.agendamento.cliente}" required="true"/>
+	                    </div>
+	                    <div class="p-field">
+	                        <p:outputLabel for="telefone">Telefone</p:outputLabel>
+	                        <p:inputMask id="telefone" value="#{agendamentoBean.agendamento.telefone}" required="true"
+	                        			 mask="99999-9999"/>
+	                    </div>
+	                    <div class="p-field">
+	                    	<p:outputLabel for="servico">Serviço</p:outputLabel>
+	                    	<p:selectOneMenu id="servico" value="#{agendamentoBean.agendamento.servico}" layout="responsive">
+	                    		<f:selectItem itemLabel="Corte" itemValue="Corte"/>
+                            	<f:selectItem itemLabel="Barba" itemValue="Barba"/>
+                            	<f:selectItem itemLabel="Corte e barba" itemValue="Corte e barba"/>
+                            	<f:selectItem itemLabel="Corte e sobrancelha" itemValue="Corte e sobrancelha"/>
+                            	<f:selectItem itemLabel="Barba e sobrancelha" itemValue="Barba e sobrancelha"/>
+                            	<f:selectItem itemLabel="Corte, barba e sobrancelha" itemValue="Corte, barba e sobrancelha"/>
+	                    	</p:selectOneMenu>
+	                    </div>
+	                    <div class="p-field">
+                            <p:outputLabel for="datetime">Data e horário</p:outputLabel>
+                			<p:datePicker id="datetime" showTime="true" 
+                			value="#{agendamentoBean.dataSelecionada}">
+                				 <p:ajax event="dateSelect" listener="#{agendamentoBean.converter}"/>
+                			</p:datePicker>
+                    	</div>
+                    	<div class="p-field">
+	                        <p:outputLabel for="observacoes">Alguma observação?</p:outputLabel>
+	                        <p:inputTextarea id="observacoes" value="#{agendamentoBean.agendamento.observacoes}"/>
+	                    </div>
+       	   			</p:outputPanel>
+	       		</p:outputPanel>
+	       		<f:facet name="footer">
+	                <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{agendamentoBean.salvar}"
+	                                 update="agendamentoPanel" process="agendamentoPanel @this"/>
+	                <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('agendamentoDialog').hide()"
+	                                 class="ui-button-danger"/>
+	            </f:facet>
+	       </p:dialog>
+	       
+	       <p:confirmDialog widgetVar="excluirDialog" showEffect="fade" width="250"
+                         message="Excluir o agendamento?" severity="warn">
+	           <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{agendamentoBean.excluir}"
+	                            process="@this" oncomplete="PF('excluirDialog').hide()"/>
+	           <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+	                            onclick="PF('excluirDialog').hide()"/>
+	       </p:confirmDialog>
+		</h:form>
+	</h:body>
+</html>
